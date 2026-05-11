@@ -21399,7 +21399,7 @@ var __async = (__this, __arguments, generator) => {
         ['Address', cl.addr, 'Project Site', cl.site],
         ['Timeline', proj.timeline, 'Company', co.name],
       ];
-      doc.autotable({
+      doc.autoTable({
         startY: y, tableWidth: pw, margin: { left: lm },
         head: [], body: infoData,
         theme: 'grid', styles: { fontSize: 8, cellPadding: 1.5, textColor: [30,41,59] },
@@ -21436,7 +21436,7 @@ var __async = (__this, __arguments, generator) => {
         const roomTot = room.items.reduce((s,i) => s+calcItemTotal(i),0);
         rows.push(['','','','','','','Room Total', fmtN(roomTot)]);
 
-        doc.autotable({
+        doc.autoTable({
           startY: y, tableWidth: pw, margin: { left: lm },
           head: [cols], body: rows,
           theme: 'grid',
@@ -21468,7 +21468,7 @@ var __async = (__this, __arguments, generator) => {
       if (gstAmt > 0) sumRows.push([`GST @ ${proj.gst}%`, fmtN(gstAmt)]);
       if (proj.discount>0 || gstAmt>0) sumRows.push(['FINAL AMOUNT', fmtN(finalTotal)]);
 
-      doc.autotable({
+      doc.autoTable({
         startY: y, tableWidth: pw/2+40, margin: { left: lm+pw/2-40 },
         body: sumRows,
         theme: 'grid',
