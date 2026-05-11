@@ -161,7 +161,7 @@
     .summary-card.grand .sc-value { color: #92580a; }
 
     /* ─── Rooms Container ─────────────────────────────────────── */
-    #rooms-container { display: flex; flex-direction: column; gap: 1.25rem; }
+    #rooms-container { display: flex; flex-direction: column; gap: 2rem; }
 
     /* ─── Empty State ─────────────────────────────────────────── */
     .empty-state {
@@ -416,7 +416,7 @@
       .print-footer { display: block !important; }
       .item-select, .item-input { border: none; background: transparent; }
       .summary-strip { display: grid !important; }
-      #rooms-container { gap: 1rem; }
+      #rooms-container { gap: 2rem; }
     }
 
     /* ─── Print Header / Footer (hidden on screen) ────────────── */
@@ -20747,19 +20747,20 @@ var __async = (__this, __arguments, generator) => {
 <!-- ════════════════════════════════════════════════
      PRINT HEADER  (visible only when printing)
 ════════════════════════════════════════════════ -->
-<div class="print-header" style="padding:1.5rem 2rem 1rem; border-bottom:3px solid #1a1a2e; margin-bottom:1.5rem;">
-  <table style="width:100%;">
-    <tr>
-      <td>
-        <div style="font-size:1.4rem;font-weight:800;color:#1a1a2e;">🏠 Interior Design Quotation</div>
-        <div style="font-size:.82rem;color:#64748b;margin-top:.2rem;">Professional Cost Estimate</div>
-      </td>
-      <td style="text-align:right;">
-        <div style="font-size:.82rem;color:#475569;"><strong>Date:</strong> <span id="print-date"></span></div>
-        <div style="font-size:.82rem;color:#475569;margin-top:.2rem;"><strong>Quote Ref:</strong> <span id="print-ref"></span></div>
-      </td>
-    </tr>
-  </table>
+<div class="print-header" style="padding:1.5rem 2rem 1rem; border-bottom:2px solid #E2A84B; margin-bottom:1.5rem;">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+    <div>
+      <div style="font-size:1.5rem;font-weight:800;color:#1E293B;">SoftSoul Infra</div>
+      <div style="font-size:.75rem;color:#E2A84B;margin-top:.1rem;">we build your dream EST 2022</div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-size:.8rem;color:#475569;"><strong>Date:</strong> <span id="print-date"></span></div>
+      <div style="font-size:.8rem;color:#475569;margin-top:.2rem;"><strong>Quote Ref:</strong> <span id="print-ref"></span></div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:.75rem;">
+    <div style="font-size:1.1rem;font-weight:700;color:#E2A84B;letter-spacing:.04em;">ESTIMATE QUOTE</div>
+  </div>
 </div>
 
 <!-- ════════════════════════════════════════════════
@@ -20873,6 +20874,16 @@ var __async = (__this, __arguments, generator) => {
       </td>
     </tr>
   </table>
+  <div style="margin-top:1rem; padding-top:.75rem; border-top:1px solid #e2e8f0;">
+    <div style="font-size:.8rem;font-weight:700;color:#475569;margin-bottom:.3rem;">Terms & Conditions</div>
+    <div style="font-size:.72rem;color:#64748b;line-height:1.6;">
+      1. This is a preliminary estimate; final cost may vary based on site conditions and design changes.<br/>
+      2. Approved material brands only — Century, Greenply, Sharon or equivalent as per availability.<br/>
+      3. Any design revision after approval will be subject to a revised quotation and timeline.<br/>
+      4. All intellectual property of drawings and designs remains with SoftSoul Infra.<br/>
+      5. This quotation is valid for 15 days.
+    </div>
+  </div>
 </div>
 
 <!-- ════════════════════════════════════════════════
@@ -21555,7 +21566,7 @@ var __async = (__this, __arguments, generator) => {
                 { text: co.name, fontSize: 18, bold: true, color: '#FFFFFF' },
                 { text: 'we build your dream EST 2022', fontSize: 9, color: '#E2A84B' },
               ]},
-              { width: 'auto', text: 'ESTIMATE QUOTATION', fontSize: 16, bold: true, color: '#E2A84B', alignment: 'right' }
+              { width: 'auto', text: 'ESTIMATE QUOTE', fontSize: 16, bold: true, color: '#E2A84B', alignment: 'right' }
             ],
             margin: [40, 8, 40, 0]
           };
