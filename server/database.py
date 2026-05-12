@@ -11,7 +11,7 @@ config = {
     'user': os.getenv('TIDB_USER', 'root'),
     'password': os.getenv('TIDB_PASSWORD', ''),
     'database': os.getenv('TIDB_DATABASE', 'quoter'),
-    'ssl_mode': os.getenv('TIDB_SSL_MODE', 'VERIFY_IDENTITY'),
+    'ssl_disabled': False,
     'pool_name': 'tidb_pool',
     'pool_size': 5,
 }
@@ -28,8 +28,17 @@ def get_connection():
     return get_pool().get_connection()
 
 def init_db():
-    conn = get_connection()
+    # Use a direct connection (no pool) to create the database
+    conn = mysql.connector.connect(
+        host=config['host'],
+        port=config['port'],
+        user=config['user'],
+        password=config['password'],
+        ssl_disabled=False,
+    )
     cursor = conn.cursor()
+    cursor.execute("CREATE DATABASE IF NOT EXISTS quoter CHARACTER SET utf8mb4")
+    cursor.execute("USE quoter")
     with open(os.path.join(os.path.dirname(__file__), 'schema.sql')) as f:
         for statement in f.read().split(';'):
             s = statement.strip()

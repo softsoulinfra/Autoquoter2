@@ -148,7 +148,7 @@ def list_quotes():
     try:
         cursor.execute("""
             SELECT id, code, client_name, project_type,
-                   DATE_FORMAT(created_at, '%%Y-%%m-%%d %%H:%%i') as created_at
+                   DATE_FORMAT(created_at, '%Y-%m-%d %H:%i') as created_at
             FROM projects
             ORDER BY created_at DESC
         """)
