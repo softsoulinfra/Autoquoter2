@@ -1,0 +1,47 @@
+CREATE DATABASE IF NOT EXISTS quoter;
+USE quoter;
+
+CREATE TABLE IF NOT EXISTS projects (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  code VARCHAR(100) NOT NULL UNIQUE,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  client_name VARCHAR(255) DEFAULT '',
+  client_phone VARCHAR(100) DEFAULT '',
+  client_email VARCHAR(255) DEFAULT '',
+  client_address TEXT,
+  client_site VARCHAR(255) DEFAULT '',
+  project_type VARCHAR(100) DEFAULT '',
+  project_date VARCHAR(100) DEFAULT '',
+  project_timeline VARCHAR(100) DEFAULT '',
+  discount DECIMAL(12,2) DEFAULT 0,
+  gst DECIMAL(5,2) DEFAULT 0,
+  notes TEXT,
+  company_name VARCHAR(255) DEFAULT 'SoftSoul Infra',
+  company_addr VARCHAR(255) DEFAULT '',
+  company_phone VARCHAR(100) DEFAULT '',
+  company_email VARCHAR(255) DEFAULT '',
+  company_web VARCHAR(255) DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS rooms (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  project_id INT NOT NULL,
+  type VARCHAR(100) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  sort_order INT DEFAULT 0,
+  FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS items (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  room_id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  custom_name VARCHAR(255) DEFAULT '',
+  qty DECIMAL(12,2) DEFAULT 1,
+  length DECIMAL(12,2) DEFAULT 0,
+  width DECIMAL(12,2) DEFAULT 0,
+  rate DECIMAL(12,2) DEFAULT 0,
+  sort_order INT DEFAULT 0,
+  FOREIGN KEY (room_id) REFERENCES rooms(id) ON DELETE CASCADE
+);
