@@ -20825,6 +20825,13 @@ var __async = (__this, __arguments, generator) => {
       <option value="Vanity">Vanity</option>
       <option value="Bathroom">Bathroom</option>
       <option value="Bedroom">Bedroom</option>
+      <option value="MBR">MBR</option>
+      <option value="CBR">CBR</option>
+      <option value="GBR">GBR</option>
+      <option value="PBR">PBR</option>
+      <option value="Ceiling">Ceiling</option>
+      <option value="Lights">Lights</option>
+      <option value="Foyer">Foyer</option>
     </select>
     <button class="btn btn-accent" onclick="addRoom()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -20905,6 +20912,9 @@ var __async = (__this, __arguments, generator) => {
     'Hall':        '🚪', 'Kitchen':  '🍳', 'Puja':       '🪔',
     'Dining Area': '🍽️', 'Balcony':  '🌿', 'Vanity':     '🪞',
     'Bathroom':    '🚿', 'Bedroom':  '🛏️',
+    'MBR':         '🛏️', 'CBR':      '🛏️', 'GBR':        '🛏️',
+    'PBR':         '🛏️', 'Ceiling':  '✨', 'Lights':     '💡',
+    'Foyer':       '🚪',
   };
 
   const ITEM_OPTIONS = [
@@ -20915,15 +20925,16 @@ var __async = (__this, __arguments, generator) => {
     'TV Unit',
     'Cot',
     'Cot Headboard',
-    'Wall Lighting',
-    'Custom Work',
+    'Wall Hilighter',
+    'Cusion work',
+    'Sitout with cusion work',
     'Vanity Unit',
     'Dining Crockery Unit',
     'Puja Unit',
     'Kitchen Base Unit',
-    'Kitchen Corner Unit',
+    'Kitchen Center Unit',
     'Kitchen Crockery Unit',
-    'Tandem Drawers',
+    'Tandem',
     'Bottle Pull-Out',
     'Sliding Channels',
     'Profile Doors',
@@ -20932,6 +20943,18 @@ var __async = (__this, __arguments, generator) => {
     'Carcass',
     'Hall Partition',
     'Arch Paneling',
+    'Ceiling Gyprock',
+    'Ceiling PVC',
+    'Ceiling wood',
+    '10W',
+    '5W',
+    '3W',
+    '2W',
+    'Profile lights',
+    'Rope light',
+    'invisible grill',
+    'mosquito mesh',
+    'Frabrication work',
     'Others',
   ];
 
