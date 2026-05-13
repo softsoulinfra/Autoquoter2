@@ -323,31 +323,6 @@
       overflow: hidden;
     }
     .details-panel.open { transform: translateX(0); }
-    .saved-quotes-panel {
-      position: fixed; top: 50%; left: 50%;
-      transform: translate(-50%,-50%);
-      width: 520px; max-width: 92vw;
-      max-height: 80vh;
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: 0 20px 60px rgba(0,0,0,.28);
-      z-index: 201;
-      padding: 1.25rem 1.5rem;
-      display: none;
-    }
-    .saved-quotes-panel.open { display: block; }
-    .sq-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: .7rem .8rem;
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      margin-bottom: .5rem;
-      transition: background .15s;
-    }
-    .sq-item:hover { background: #f8fafc; }
-    .sq-item .sq-code { font-weight: 600; color: var(--text); font-size: .85rem; }
-    .sq-item .sq-meta { font-size: .75rem; color: var(--muted); }
-    .sq-item .sq-actions { display: flex; gap: .4rem; }
     .panel-hdr {
       background: linear-gradient(135deg, var(--brand) 0%, #1e3a5f 100%);
       color: #fff;
@@ -448,6 +423,89 @@
     .print-header, .print-footer { display: none; }
 
     @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Welcome / Sign-in Overlay ──────────────────────────── */
+    #welcome-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      background: #0F172A;
+      transition: opacity .5s ease;
+    }
+    #welcome-overlay.hidden { opacity: 0; pointer-events: none; }
+    .welcome-card {
+      background: #1E293B;
+      border-radius: 16px;
+      padding: 2.5rem 3rem;
+      width: 380px;
+      max-width: 90vw;
+      text-align: center;
+      box-shadow: 0 25px 60px rgba(0,0,0,.5);
+    }
+    .welcome-card.wide { width: 520px; }
+    .welcome-card .row { display: flex; gap: .75rem; }
+    .welcome-card .row .fg { flex: 1; }
+    .welcome-card .row .fg label {
+      display: block; text-align: left; font-size: .78rem;
+      color: #94A3B8; margin-bottom: .35rem;
+      font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+    }
+    .welcome-card .row .fg input { width: 100%; }
+    .welcome-logo {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -.02em;
+      margin-bottom: .15rem;
+    }
+    .welcome-tagline {
+      font-size: .82rem;
+      color: #E2A84B;
+      margin-bottom: 1.75rem;
+    }
+    .welcome-card label {
+      display: block;
+      text-align: left;
+      font-size: .78rem;
+      color: #94A3B8;
+      margin-bottom: .35rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .welcome-card input {
+      width: 100%;
+      padding: .7rem .9rem;
+      border-radius: 8px;
+      border: 1.5px solid #334155;
+      background: #0F172A;
+      color: #fff;
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s;
+      box-sizing: border-box;
+    }
+    .welcome-card input:focus { border-color: #E2A84B; }
+    .welcome-card input::placeholder { color: #475569; }
+    .welcome-btn {
+      width: 100%;
+      margin-top: 1.25rem;
+      padding: .75rem;
+      border: none;
+      border-radius: 8px;
+      background: #E2A84B;
+      color: #0F172A;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .welcome-btn:hover { background: #D4943A; }
+    .welcome-error {
+      color: #F87171;
+      font-size: .8rem;
+      margin-top: .6rem;
+      min-height: 1.2rem;
+    }
 
     /* ─── Scrollbar ───────────────────────────────────────────── */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -20621,6 +20679,63 @@ var __async = (__this, __arguments, generator) => {
 <body>
 
 <!-- ════════════════════════════════════════════════
+     WELCOME / SIGN-IN OVERLAY
+════════════════════════════════════════════════ -->
+<div id="welcome-overlay">
+  <div class="welcome-card" id="welcome-signin">
+    <div class="welcome-logo">Eterna Spaces</div>
+    <div class="welcome-tagline">we build your dream EST 2022</div>
+    <label for="si-company">Company Name</label>
+    <input id="si-company" type="text" placeholder="Enter company name"
+      onkeydown="if(event.key==='Enter') document.getElementById('si-pwd').focus()" />
+    <div style="height:.75rem;"></div>
+    <label for="si-pwd">Password</label>
+    <input id="si-pwd" type="password" placeholder="Enter password"
+      onkeydown="if(event.key==='Enter') signIn()" />
+    <button class="welcome-btn" onclick="signIn()">Sign In</button>
+    <div style="margin-top:.75rem;font-size:.82rem;color:#64748b;">
+      No account?
+      <a href="#" onclick="showRegister();return false" style="color:#E2A84B;text-decoration:none;font-weight:600;">Register</a>
+    </div>
+    <div id="welcome-error" class="welcome-error"></div>
+  </div>
+
+  <div class="welcome-card wide" id="welcome-register" style="display:none;">
+    <div class="welcome-logo">Eterna Spaces</div>
+    <div class="welcome-tagline">Create your account</div>
+    <div class="row">
+      <div class="fg"><label>First Name *</label><input id="reg-fname" type="text" placeholder="First name" /></div>
+      <div class="fg"><label>Last Name *</label><input id="reg-lname" type="text" placeholder="Last name" /></div>
+    </div>
+    <div style="height:.65rem;"></div>
+    <label style="display:block;text-align:left;font-size:.78rem;color:#94A3B8;margin-bottom:.35rem;font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Company Name *</label>
+    <input id="reg-company" type="text" placeholder="Company name (this will be your username)" />
+    <div style="height:.65rem;"></div>
+    <div class="row">
+      <div class="fg"><label>Email ID *</label><input id="reg-email" type="email" placeholder="email@example.com" /></div>
+      <div class="fg"><label>Mobile Number *</label><input id="reg-mobile" type="tel" placeholder="+91 XXXXX XXXXX" /></div>
+    </div>
+    <div style="height:.65rem;"></div>
+    <div class="row">
+      <div class="fg"><label>Password *</label>
+        <input id="reg-pwd" type="password" placeholder="Min 4 characters"
+          onkeydown="if(event.key==='Enter') document.getElementById('reg-pwd2').focus()" />
+      </div>
+      <div class="fg"><label>Confirm Password *</label>
+        <input id="reg-pwd2" type="password" placeholder="Re-enter password"
+          onkeydown="if(event.key==='Enter') doRegister()" />
+      </div>
+    </div>
+    <button class="welcome-btn" onclick="doRegister()">Register</button>
+    <div style="margin-top:.75rem;font-size:.82rem;color:#64748b;">
+      Already have an account?
+      <a href="#" onclick="showSignIn();return false" style="color:#E2A84B;text-decoration:none;font-weight:600;">Sign In</a>
+    </div>
+    <div id="reg-error" class="welcome-error"></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════
      CLIENT DETAILS PANEL
 ════════════════════════════════════════════════ -->
 <div class="panel-overlay" id="panel-overlay" onclick="closePanel()"></div>
@@ -20639,7 +20754,7 @@ var __async = (__this, __arguments, generator) => {
     <div class="panel-section">🏢 Company Details</div>
     <div class="fg">
       <label>Company Name</label>
-      <input id="co-name" type="text" placeholder="SoftSoul Infra" value="SoftSoul Infra" />
+      <input id="co-name" type="text" placeholder="Eterna Spaces" value="Eterna Spaces" />
     </div>
     <div class="fg">
       <label>Address</label>
@@ -20732,28 +20847,6 @@ var __async = (__this, __arguments, generator) => {
       <input id="cl-site" type="text" placeholder="e.g. Mokila, Hyderabad – 501203" />
     </div>
 
-    <!-- Schema Source Files -->
-    <div class="panel-section">📄 Schema Source Files</div>
-    <div style="background:#fffbeb;border:1.5px solid #f59e0b;border-radius:8px;padding:.7rem .9rem;margin-bottom:.75rem;font-size:.75rem;color:#92400e;line-height:1.5;">
-      <strong>How to update templates:</strong><br>
-      1. Open <code>agreement-schema.docx</code> or <code>quotation-schema.docx</code><br>
-      2. Edit the <strong>VALUE</strong> column → Save<br>
-      3. Load the file below — changes apply immediately
-    </div>
-    <div class="fg">
-      <label>📝 Agreement Template <span style="color:var(--muted);font-weight:400;">(agreement-schema.docx)</span></label>
-      <input type="file" id="import-agreement-schema" accept=".docx"
-        style="padding:.35rem .5rem;font-size:.78rem;"
-        onchange="loadSchemaFile(this,'agreement')" />
-      <div id="agreement-schema-status" style="font-size:.7rem;color:var(--success);margin-top:.25rem;display:none;"></div>
-    </div>
-    <div class="fg">
-      <label>📊 Quotation Template <span style="color:var(--muted);font-weight:400;">(quotation-schema.docx)</span></label>
-      <input type="file" id="import-quotation-schema" accept=".docx"
-        style="padding:.35rem .5rem;font-size:.78rem;"
-        onchange="loadSchemaFile(this,'quotation')" />
-      <div id="quotation-schema-status" style="font-size:.7rem;color:var(--success);margin-top:.25rem;display:none;"></div>
-    </div>
   </div>
 
   <div class="panel-footer" style="display:flex;flex-direction:column;gap:.55rem;">
@@ -20775,7 +20868,7 @@ var __async = (__this, __arguments, generator) => {
 <div class="print-header" style="padding:1.5rem 2rem 1rem; border-bottom:2px solid #E2A84B; margin-bottom:1.5rem;">
   <div style="display:flex; justify-content:space-between; align-items:flex-start;">
     <div>
-      <div style="font-size:1.5rem;font-weight:800;color:#1E293B;">SoftSoul Infra</div>
+      <div style="font-size:1.5rem;font-weight:800;color:#1E293B;">Eterna Spaces</div>
       <div style="font-size:.75rem;color:#E2A84B;margin-top:.1rem;">we build your dream EST 2022</div>
     </div>
     <div style="text-align:right;">
@@ -20796,7 +20889,7 @@ var __async = (__this, __arguments, generator) => {
     <div class="brand">
       <div class="brand-icon">🏠</div>
       <div class="brand-text">
-        <h1>SoftSoul Infra E-Quoter</h1>
+        <h1>Eterna Spaces E-Quoter</h1>
         <p>Professional Cost Estimator for Interior Design Projects</p>
       </div>
     </div>
@@ -20824,21 +20917,33 @@ var __async = (__this, __arguments, generator) => {
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="15" y2="16"/><line x1="9" y1="8" x2="11" y2="8"/></svg>
         Agreement
       </button>
-      <button class="btn btn-success" onclick="exportQuote()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-        Print Quote
-      </button>
-      <button class="btn" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;" onclick="saveQuote()">
+      <button id="btn-save" class="btn" style="background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
         Save
       </button>
-      <button class="btn btn-ghost btn-info" onclick="showSavedQuotes()">
+      <button id="btn-load" class="btn btn-ghost btn-info">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         Load
+      </button>
+      <button class="btn btn-ghost" onclick="signOut()" style="color:#94a3b8;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Logout
       </button>
     </div>
   </div>
 </header>
+
+<!-- ════════════════════════════════════════════════
+     SAVED QUOTES MODAL
+════════════════════════════════════════════════ -->
+<div id="sq-overlay" class="panel-overlay"></div>
+<div id="sq-panel" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:520px;max-width:92vw;max-height:80vh;background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.28);z-index:201;padding:1.25rem 1.5rem;display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+    <h2 style="font-size:1rem;font-weight:700;color:#1a1a2e;">Saved Quotes</h2>
+    <span onclick="closeSQ()" style="cursor:pointer;font-size:1.2rem;color:#94a3b8;">✕</span>
+  </div>
+  <div id="sq-list" style="max-height:60vh;overflow-y:auto;"></div>
+</div>
 
 <!-- ════════════════════════════════════════════════
      MAIN CONTENT
@@ -20920,23 +21025,9 @@ var __async = (__this, __arguments, generator) => {
       1. This is a preliminary estimate; final cost may vary based on site conditions and design changes.<br/>
       2. Approved material brands only — Century, Greenply, Sharon or equivalent as per availability.<br/>
       3. Any design revision after approval will be subject to a revised quotation and timeline.<br/>
-      4. All intellectual property of drawings and designs remains with SoftSoul Infra.<br/>
+      4. All intellectual property of drawings and designs remains with Eterna Spaces.<br/>
       5. This quotation is valid for 15 days.
     </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════════
-     SAVED QUOTES MODAL
-════════════════════════════════════════════════ -->
-<div id="saved-quotes-overlay" class="panel-overlay" onclick="closeSavedQuotes()"></div>
-<div id="saved-quotes-panel" class="saved-quotes-panel">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-    <h2 style="font-size:1rem;font-weight:700;color:#1a1a2e;">Saved Quotes</h2>
-    <button class="btn btn-ghost" onclick="closeSavedQuotes()" style="font-size:1.2rem;padding:.2rem .5rem;">✕</button>
-  </div>
-  <div id="saved-quotes-list" style="max-height:60vh;overflow-y:auto;">
-    <div style="text-align:center;color:#94a3b8;padding:2rem 0;">Loading...</div>
   </div>
 </div>
 
@@ -21383,19 +21474,6 @@ var __async = (__this, __arguments, generator) => {
     updateGrandTotal();
   }
 
-  /* ── Export / Print ────────────────────────────────── */
-  function exportQuote() {
-    // Set print meta
-    const now = new Date();
-    const dateStr = now.toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
-    const ref = 'IDQ-' + now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + String(now.getDate()).padStart(2,'0') + '-' + Math.floor(Math.random()*900+100);
-    document.getElementById('print-date').textContent = dateStr;
-    document.getElementById('print-ref').textContent  = ref;
-    const pg = document.getElementById('print-grand-total');
-    if (pg) pg.textContent = document.getElementById('grand-total').textContent;
-    window.print();
-  }
-
   /* ── Panel open / close ─────────────────────────────── */
   function openPanel() {
     document.getElementById('details-panel').classList.add('open');
@@ -21408,169 +21486,99 @@ var __async = (__this, __arguments, generator) => {
     document.body.style.overflow = '';
   }
 
-  /* ── Saved Quotes API ────────────────────────────── */
-  const API = ['localhost','127.0.0.1','::1',''].includes(location.hostname)
-    ? 'http://localhost:8000'
-    : 'https://your-backend-url.onrender.com';
-  console.log('API base URL:', API);
+  /* ── Sign In / Register ────────────────────────── */
+  function getUsers() {
+    try { return JSON.parse(localStorage.getItem('app_users')) || []; } catch { return []; }
+  }
+  function saveUsers(u) { localStorage.setItem('app_users', JSON.stringify(u)); }
 
-  async function saveQuote() {
-    if (rooms.length === 0) { alert('Add at least one room before saving.'); return; }
-    const code = (document.getElementById('proj-code')?.value || '').trim();
-    if (!code) { alert('Please enter a Quote/Project Code before saving.'); return; }
+  function signOut() {
+    sessionStorage.removeItem('signedIn');
+    document.getElementById('welcome-overlay').classList.remove('hidden');
+    showSignIn();
+  }
 
-    const proj = {
-      code,
-      client_name: F('cl-name'), client_phone: F('cl-phone'), client_email: F('cl-email'),
-      client_address: F('cl-addr'), client_site: F('cl-site'),
-      project_type: F('proj-type'), project_date: document.getElementById('proj-date')?.value || '',
-      project_timeline: F('proj-timeline'),
-      discount: fv('proj-discount'), gst: fv('proj-gst'),
-      notes: (document.getElementById('proj-notes')?.value || '').trim(),
-      company_name: F('co-name','SoftSoul Infra'), company_addr: F('co-addr'),
-      company_phone: F('co-phone'), company_email: F('co-email'), company_web: F('co-web'),
-      rooms: rooms.map(r => ({
-        type: r.type, name: r.name,
-        items: r.items.map(i => ({
-          name: i.name, custom_name: i.customName || '',
-          qty: parseFloat(i.qty) || 0, length: parseFloat(i.length) || 0,
-          width: parseFloat(i.width) || 0, rate: parseFloat(i.rate) || 0,
-        }))
-      }))
-    };
-
-    try {
-      const res = await fetch(`${API}/api/quotes`, {
-        method: 'POST', headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(proj)
-      });
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail || 'Save failed');
-      }
-      alert('Quote saved successfully!');
-    } catch (e) {
-      alert('Error saving: ' + e.message);
+  function signIn() {
+    const company = document.getElementById('si-company');
+    const pwd = document.getElementById('si-pwd');
+    const err = document.getElementById('welcome-error');
+    if (!company.value) { err.textContent = 'Please enter your company name.'; company.focus(); return; }
+    const users = getUsers();
+    const user = users.find(u => u.company.toLowerCase() === company.value.trim().toLowerCase());
+    if (user && user.password === pwd.value) {
+      sessionStorage.setItem('signedIn', '1');
+      sessionStorage.setItem('signedUser', JSON.stringify(user));
+      document.getElementById('welcome-overlay').classList.add('hidden');
+    } else {
+      err.textContent = 'Invalid company name or password.';
+      pwd.value = '';
+      pwd.focus();
     }
   }
 
-  async function showSavedQuotes() {
-    const panel = document.getElementById('saved-quotes-panel');
-    const list = document.getElementById('saved-quotes-list');
-    panel.classList.add('open');
-    document.getElementById('saved-quotes-overlay').classList.add('open');
-    list.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:2rem 0;">Loading...</div>';
+  function showRegister() {
+    document.getElementById('welcome-signin').style.display = 'none';
+    document.getElementById('welcome-register').style.display = 'block';
+    ['reg-fname','reg-lname','reg-company','reg-email','reg-mobile','reg-pwd','reg-pwd2'].forEach(id =>
+      document.getElementById(id).value = '');
+    document.getElementById('reg-error').textContent = '';
+    document.getElementById('reg-error').style.color = '#F87171';
+    document.getElementById('reg-fname').focus();
+  }
 
-    try {
-      const res = await fetch(`${API}/api/quotes`);
-      if (!res.ok) throw new Error('Failed to load');
-      const quotes = await res.json();
-      if (quotes.length === 0) {
-        list.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:2rem 0;">No saved quotes yet.</div>';
-        return;
-      }
-      list.innerHTML = quotes.map(q => `
-        <div class="sq-item">
-          <div>
-            <div class="sq-code">${q.code}</div>
-            <div class="sq-meta">${q.client_name || 'No client'} &middot; ${q.project_type || '—'} &middot; ${q.created_at}</div>
-          </div>
-          <div class="sq-actions">
-            <button class="btn btn-primary" style="padding:.3rem .6rem;font-size:.75rem;" onclick="loadSavedQuote('${q.code}')">Load</button>
-            <button class="btn btn-danger" style="padding:.3rem .6rem;font-size:.75rem;" onclick="deleteSavedQuote('${q.code}')">Del</button>
-          </div>
-        </div>
-      `).join('');
-    } catch (e) {
-      list.innerHTML = `<div style="text-align:center;color:#dc2626;padding:2rem 0;">Error: ${e.message}<br/><small>Make sure the backend server is running.</small></div>`;
+  function showSignIn() {
+    document.getElementById('welcome-signin').style.display = 'block';
+    document.getElementById('welcome-register').style.display = 'none';
+    document.getElementById('si-company').value = '';
+    document.getElementById('si-pwd').value = '';
+    document.getElementById('welcome-error').textContent = '';
+    document.getElementById('si-company').focus();
+  }
+
+  function doRegister() {
+    const g = id => document.getElementById(id);
+    const err = document.getElementById('reg-error');
+    err.style.color = '#F87171';
+    const fname = g('reg-fname').value.trim();
+    const lname = g('reg-lname').value.trim();
+    const company = g('reg-company').value.trim();
+    const email = g('reg-email').value.trim();
+    const mobile = g('reg-mobile').value.trim();
+    const p1 = g('reg-pwd').value;
+    const p2 = g('reg-pwd2').value;
+
+    if (!fname) { err.textContent = 'First name is required.'; g('reg-fname').focus(); return; }
+    if (!lname) { err.textContent = 'Last name is required.'; g('reg-lname').focus(); return; }
+    if (!company) { err.textContent = 'Company name is required.'; g('reg-company').focus(); return; }
+    if (!email) { err.textContent = 'Email ID is required.'; g('reg-email').focus(); return; }
+    if (!mobile) { err.textContent = 'Mobile number is required.'; g('reg-mobile').focus(); return; }
+    if (!p1) { err.textContent = 'Password is required.'; g('reg-pwd').focus(); return; }
+    if (p1.length < 4) { err.textContent = 'Password must be at least 4 characters.'; g('reg-pwd').focus(); return; }
+    if (p1 !== p2) { err.textContent = 'Passwords do not match.'; g('reg-pwd2').value = ''; g('reg-pwd2').focus(); return; }
+
+    const users = getUsers();
+    if (users.find(u => u.company.toLowerCase() === company.toLowerCase())) {
+      err.textContent = 'Company name already registered. Please sign in.';
+      return;
     }
-  }
-
-  function closeSavedQuotes() {
-    document.getElementById('saved-quotes-panel').classList.remove('open');
-    document.getElementById('saved-quotes-overlay').classList.remove('open');
-  }
-
-  async function loadSavedQuote(code) {
-    if (rooms.length > 0 && !confirm('Loading this quote will replace all current rooms. Continue?')) return;
-    try {
-      const res = await fetch(`${API}/api/quotes/${code}`);
-      if (!res.ok) throw new Error('Not found');
-      const data = await res.json();
-
-      document.getElementById('proj-code').value = data.code || '';
-      document.getElementById('cl-name').value = data.client_name || '';
-      document.getElementById('cl-phone').value = data.client_phone || '';
-      document.getElementById('cl-email').value = data.client_email || '';
-      document.getElementById('cl-addr').value = data.client_address || '';
-      document.getElementById('cl-site').value = data.client_site || '';
-      document.getElementById('proj-type').value = data.project_type || '';
-      if (data.project_date) document.getElementById('proj-date').value = data.project_date;
-      document.getElementById('proj-timeline').value = data.project_timeline || '';
-      document.getElementById('proj-discount').value = data.discount || '';
-      document.getElementById('proj-gst').value = data.gst || '';
-      document.getElementById('proj-notes').value = data.notes || '';
-      document.getElementById('co-name').value = data.company_name || 'SoftSoul Infra';
-      document.getElementById('co-addr').value = data.company_addr || '';
-      document.getElementById('co-phone').value = data.company_phone || '';
-      document.getElementById('co-email').value = data.company_email || '';
-      document.getElementById('co-web').value = data.company_web || '';
-
-      // Rebuild rooms
-      resetAllHard();
-      for (const r of data.rooms) {
-        const room = { id: generateId(), type: r.type, name: r.name, items: [] };
-        for (const it of (r.items || [])) {
-          room.items.push({
-            id: generateId(), name: it.name, customName: it.custom_name || '',
-            qty: String(it.qty || 1), length: String(it.length || 0),
-            width: String(it.width || 0), rate: String(it.rate || 0),
-          });
-        }
-        rooms.push(room);
-        roomCounter++;
-        renderRoom(room);
-        room.items.forEach(item => renderItemRow(room.id, item));
-      }
-      updateStats();
-      updateGrandTotal();
-      closeSavedQuotes();
-      alert('Quote loaded!');
-    } catch (e) {
-      alert('Error loading: ' + e.message);
+    if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+      err.textContent = 'Email ID already registered.';
+      return;
     }
-  }
 
-  async function deleteSavedQuote(code) {
-    if (!confirm(`Delete quote "${code}"?`)) return;
-    try {
-      const res = await fetch(`${API}/api/quotes/${code}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Delete failed');
-      showSavedQuotes();
-    } catch (e) {
-      alert('Error deleting: ' + e.message);
-    }
-  }
-
-  /* Explicitly attach to window so onclick can find it */
-  window.saveQuote = saveQuote;
-  window.showSavedQuotes = showSavedQuotes;
-  window.closeSavedQuotes = closeSavedQuotes;
-  window.loadSavedQuote = loadSavedQuote;
-  window.deleteSavedQuote = deleteSavedQuote;
-
-  function generateId() { return '_' + Math.random().toString(36).substr(2, 9); }
-  function resetAllHard() {
-    rooms = []; roomCounter = 0; bedroomCount = 0;
-    const container = document.getElementById('rooms-container');
-    [...container.querySelectorAll('.room-card')].forEach(el => el.remove());
-    const es = document.getElementById('empty-state');
-    if (es) { container.appendChild(es); es.style.display = ''; }
-    updateStats(); updateGrandTotal();
+    users.push({ firstName: fname, lastName: lname, company, email, mobile, password: p1 });
+    saveUsers(users);
+    err.style.color = '#4ADE80';
+    err.textContent = '✓ Registration successful! You can now sign in.';
+    setTimeout(() => { showSignIn(); g('si-company').value = company; g('si-pwd').focus(); }, 1000);
   }
 
   // Pre-fill today's date
   document.addEventListener('DOMContentLoaded', () => {
+    // Check session
+    if (sessionStorage.getItem('signedIn')) {
+      document.getElementById('welcome-overlay').classList.add('hidden');
+    }
     const d = document.getElementById('proj-date');
     if (d) d.value = new Date().toISOString().slice(0, 10);
     // Close mobile menu on resize to desktop
@@ -21579,6 +21587,10 @@ var __async = (__this, __arguments, generator) => {
         document.getElementById('header-actions')?.classList.remove('open');
       }
     });
+    // Save / Load button wiring
+    document.getElementById('btn-save')?.addEventListener('click', saveQuote);
+    document.getElementById('btn-load')?.addEventListener('click', showSQ);
+    document.getElementById('sq-overlay')?.addEventListener('click', closeSQ);
   });
 
   /* docx library is bundled inline — no CDN needed */
@@ -21597,7 +21609,7 @@ var __async = (__this, __arguments, generator) => {
     try {
       if (rooms.length === 0) { alert('Please add at least one room before generating a PDF.'); return; }
 
-      const co = { name:F('co-name','SoftSoul Infra'), addr:F('co-addr'), phone:F('co-phone'), email:F('co-email'), web:F('co-web') };
+      const co = { name:F('co-name','Eterna Spaces'), addr:F('co-addr'), phone:F('co-phone'), email:F('co-email'), web:F('co-web') };
       const rawDate = document.getElementById('proj-date')?.value;
       const displayDate = rawDate ? new Date(rawDate).toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'}) : '_____________';
       const proj = { code:F('proj-code'), date:displayDate, type:F('proj-type'), timeline:F('proj-timeline'), discount:fv('proj-discount'), gst:fv('proj-gst'), notes:(document.getElementById('proj-notes')?.value||'').trim() };
@@ -21857,7 +21869,7 @@ var __async = (__this, __arguments, generator) => {
 
     /* ── Collect form values ── */
     const co = {
-      name:  F('co-name',  'SoftSoul Infra'),
+      name:  F('co-name',  'Eterna Spaces'),
       addr:  F('co-addr'),
       phone: F('co-phone'),
       email: F('co-email'),
@@ -22253,7 +22265,7 @@ var __async = (__this, __arguments, generator) => {
   ══════════════════════════════════════════════════════ */
   let AGREEMENT_SCHEMA = {
     meta: { title: "Interior Design Services Agreement", projectTypeLabel: "For Residential Interior Project", font: "Verdana" },
-    company: { name: "SoftSoul Infra", addressLine1: "KL Reddy Residency, Mathrusree Nagar", addressLine2: "Hyderabad, Telangana – India", phone: "+91 91332 44447", email: "softsoulinfra@gmail.com", website: "www.softsoulinfra.com", disputeCity: "Nellore, Andhra Pradesh", disputeState: "under Indian law" },
+    company: { name: "Eterna Spaces", addressLine1: "KL Reddy Residency, Mathrusree Nagar", addressLine2: "Hyderabad, Telangana – India", phone: "+91 91332 44447", email: "softsoulinfra@gmail.com", website: "www.softsoulinfra.com", disputeCity: "Nellore, Andhra Pradesh", disputeState: "under Indian law" },
     sections: {
       scopeOfWork: { heading: "3. Scope of Work", intro: "{{companyName}} shall provide complete residential interior design and execution services, including:", items: ["Turnkey Interior Execution – End-to-end project management including design, material procurement, and on-site implementation.", "Custom Furniture Fabrication – Design and manufacturing of customized furniture such as beds, wardrobes, and modular units.", "Material Selection Assistance – Expert guidance on laminates, finishes, accessories, and modular hardware.", "Design Documentation – Finalized working drawings, and material specifications will be submitted before execution.", "Approved Brand Usage – Only industry-standard materials like Century, Greenply, Sharon, Pencil, etc. (as per availability) and fittings by Ebco, Godrej, Dorset, Asian Sleek, Nimmi will be used.", "Limited Customization Window – Design revisions will be accepted before execution begins. Revisions post-approval will be subject to revised quotation and timeline."], quotationNote: "The project’s final quote as agreed upon with the client and the measurements taken in accordance." },
       paymentTerms: { heading: "4. Payment Terms", intro: "The total estimated project cost is {{grandTotal}} for the {{projectType}} which is located at {{projectSite}} and after the discounted and final quotation value is {{finalAmount}}/- where the payment terms are payable in the following stages:", stages: [{ sno:1, particular:"Initial signing fee", mode:"percent_of_remaining", percent:7.22, displayPercent:"5%" }, { sno:2, particular:"Advance for material procurement", mode:"percent_of_remaining", percent:50, displayPercent:"50%" }, { sno:3, particular:"Payment after material procurement", mode:"percent_of_remaining", percent:55, displayPercent:"55%" }, { sno:4, particular:"Payment during installation phase", mode:"percent_of_remaining", percent:30, displayPercent:"30%" }, { sno:5, particular:"Payment during installation phase", mode:"percent_of_remaining", percent:80, displayPercent:"80%" }, { sno:6, particular:"Payment before final completion", mode:"percent_of_remaining", percent:100, displayPercent:"100%" }], footerNote: "Total quoted amount is {{finalAmount}}" },
@@ -22835,6 +22847,185 @@ var __async = (__this, __arguments, generator) => {
       alert('Error generating agreement: '+err.message);
     } finally {
       restore();
+    }
+  }
+
+  /* ── Save / Load API ──────────────────────────── */
+  const API_BASE = 'http://localhost:8000';
+
+  function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+  function collectFormData() {
+    const g = id => (document.getElementById(id)?.value || '').trim();
+    const gn = id => parseFloat(document.getElementById(id)?.value) || 0;
+    return {
+      code: g('proj-code') || 'UNTITLED',
+      client_name: g('cl-name'),
+      client_phone: g('cl-phone'),
+      client_email: g('cl-email'),
+      client_address: g('cl-addr'),
+      client_site: g('cl-site'),
+      project_type: g('proj-type'),
+      project_date: g('proj-date'),
+      project_timeline: g('proj-timeline'),
+      discount: gn('proj-discount'),
+      gst: gn('proj-gst'),
+      notes: g('proj-notes'),
+      company_name: g('co-name') || 'Eterna Spaces',
+      company_addr: g('co-addr'),
+      company_phone: g('co-phone'),
+      company_email: g('co-email'),
+      company_web: g('co-web'),
+      rooms: rooms.map((room, ri) => ({
+        type: room.type,
+        name: room.name,
+        sort_order: ri,
+        items: room.items.map((item, ii) => ({
+          name: item.name,
+          custom_name: item.customName || '',
+          qty: parseFloat(item.qty) || 0,
+          length: parseFloat(item.length) || 0,
+          width: parseFloat(item.width) || 0,
+          rate: parseFloat(item.rate) || 0,
+          sort_order: ii
+        }))
+      }))
+    };
+  }
+
+  async function saveQuote() {
+    if (rooms.length === 0) { alert('Add at least one room before saving.'); return; }
+    const data = collectFormData();
+    if (!data.code || data.code === 'UNTITLED') { alert('Please enter a Quote / Project Code.'); return; }
+    const btn = document.getElementById('btn-save');
+    const orig = btn.innerHTML;
+    btn.disabled = true; btn.innerHTML = 'Saving…';
+    try {
+      const code = encodeURIComponent(data.code);
+      const exists = await fetch(API_BASE + '/api/quotes/' + code).then(r => r.ok);
+      const method = exists ? 'PUT' : 'POST';
+      const res = await fetch(API_BASE + '/api/quotes' + (exists ? '/' + code : ''), {
+        method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
+      });
+      if (!res.ok) { const err = await res.json(); throw new Error(err.detail || 'Save failed'); }
+      alert(exists ? 'Quote updated successfully!' : 'Quote saved successfully!');
+    } catch (e) {
+      alert('Error saving: ' + e.message);
+    } finally {
+      btn.innerHTML = orig; btn.disabled = false;
+    }
+  }
+
+  async function showSQ() {
+    const overlay = document.getElementById('sq-overlay');
+    const panel = document.getElementById('sq-panel');
+    const list = document.getElementById('sq-list');
+    list.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:2rem 0;">Loading…</p>';
+    overlay.style.cssText = 'display:block;opacity:1;pointer-events:all;';
+    panel.style.display = 'block';
+    try {
+      const res = await fetch(API_BASE + '/api/quotes');
+      if (!res.ok) throw new Error('Failed to load');
+      const quotes = await res.json();
+      if (!quotes.length) {
+        list.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:2rem 0;">No saved quotes yet.</p>';
+        return;
+      }
+      list.innerHTML = '<table style="width:100%;border-collapse:collapse;">' +
+        '<thead><tr style="background:#f1f5f9;font-size:.75rem;color:#64748b;text-transform:uppercase;">' +
+        '<th style="padding:.5rem .75rem;text-align:left;">Code</th>' +
+        '<th style="padding:.5rem .75rem;text-align:left;">Client</th>' +
+        '<th style="padding:.5rem .75rem;text-align:left;">Project</th>' +
+        '<th style="padding:.5rem .75rem;text-align:left;">Date</th>' +
+        '<th style="padding:.5rem .75rem;text-align:center;">Actions</th></tr></thead><tbody>' +
+        quotes.map(q => '<tr style="border-bottom:1px solid #e2e8f0;font-size:.85rem;">' +
+          '<td style="padding:.5rem .75rem;font-weight:600;color:#1e293b;">' + escHtml(q.code) + '</td>' +
+          '<td style="padding:.5rem .75rem;color:#334155;">' + escHtml(q.client_name) + '</td>' +
+          '<td style="padding:.5rem .75rem;color:#334155;">' + escHtml(q.project_type) + '</td>' +
+          '<td style="padding:.5rem .75rem;color:#64748b;">' + escHtml(q.created_at) + '</td>' +
+          '<td style="padding:.5rem .75rem;text-align:center;white-space:nowrap;">' +
+          '<button onclick="loadSQ(\'' + escHtml(q.code) + '\')" style="padding:.25rem .6rem;font-size:.75rem;background:#0d9488;color:#fff;border:none;border-radius:4px;cursor:pointer;margin-right:4px;">Load</button>' +
+          '<button onclick="deleteSQ(\'' + escHtml(q.code) + '\')" style="padding:.25rem .6rem;font-size:.75rem;background:#ef4444;color:#fff;border:none;border-radius:4px;cursor:pointer;">Del</button>' +
+          '</td></tr>'
+        ).join('') +
+        '</tbody></table>';
+    } catch (e) {
+      list.innerHTML = '<p style="color:#ef4444;text-align:center;padding:2rem 0;">Error: ' + escHtml(e.message) + '</p>';
+    }
+  }
+
+  function closeSQ() {
+    const ov = document.getElementById('sq-overlay');
+    ov.style.cssText = 'display:none;opacity:0;pointer-events:none;';
+    document.getElementById('sq-panel').style.display = 'none';
+  }
+
+  async function deleteSQ(code) {
+    if (!confirm('Delete quote "' + code + '"? This cannot be undone.')) return;
+    try {
+      const res = await fetch(API_BASE + '/api/quotes/' + encodeURIComponent(code), { method: 'DELETE' });
+      if (!res.ok) throw new Error('Delete failed');
+      showSQ();
+    } catch (e) {
+      alert('Error deleting: ' + e.message);
+    }
+  }
+
+  async function loadSQ(code) {
+    try {
+      const res = await fetch(API_BASE + '/api/quotes/' + encodeURIComponent(code));
+      if (!res.ok) throw new Error('Load failed');
+      const data = await res.json();
+
+      const sv = (id, val) => { const el = document.getElementById(id); if (el) el.value = val || ''; };
+      sv('proj-code', data.code);
+      sv('cl-name', data.client_name);
+      sv('cl-phone', data.client_phone);
+      sv('cl-email', data.client_email);
+      sv('cl-addr', data.client_address);
+      sv('cl-site', data.client_site);
+      sv('proj-type', data.project_type);
+      sv('proj-date', data.project_date ? data.project_date.slice(0,10) : '');
+      sv('proj-timeline', data.project_timeline);
+      sv('proj-discount', data.discount);
+      sv('proj-gst', data.gst);
+      sv('proj-notes', data.notes);
+      sv('co-name', data.company_name);
+      sv('co-addr', data.company_addr);
+      sv('co-phone', data.company_phone);
+      sv('co-email', data.company_email);
+      sv('co-web', data.company_web);
+
+      rooms = []; roomCounter = 0; bedroomCount = 0;
+      const container = document.getElementById('rooms-container');
+      [...container.querySelectorAll('.room-card')].forEach(el => el.remove());
+
+      (data.rooms || []).forEach(r => {
+        roomCounter++;
+        let name = r.name;
+        if (r.type === 'Bedroom') bedroomCount++;
+        const room = { id: uid(), type: r.type, name, items: [] };
+        (r.items || []).forEach(item => {
+          room.items.push({
+            id: uid(), name: item.name,
+            customName: item.custom_name || '',
+            qty: item.qty || 1, length: item.length || '',
+            width: item.width || '', rate: item.rate || ''
+          });
+        });
+        rooms.push(room);
+        renderRoom(room);
+        room.items.forEach(item => renderItemRow(room.id, item));
+        updateRoomTotal(room.id);
+        const sub = document.querySelector(`#room-${room.id} .room-subtitle`);
+        if (sub) sub.textContent = `${room.type} • ${room.items.length} item${room.items.length !== 1 ? 's' : ''}`;
+      });
+
+      updateStats(); updateGrandTotal(); checkEmpty();
+      closeSQ();
+      alert('Quote loaded successfully!');
+    } catch (e) {
+      alert('Error loading: ' + e.message);
     }
   }
 

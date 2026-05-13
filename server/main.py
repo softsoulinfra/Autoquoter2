@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from database import get_connection, init_db
+from database import get_connection, get_pool, init_db
 
 app = FastAPI(title="SoftSoul Infra E-Quoter API")
 
@@ -83,6 +83,8 @@ class ProjectOut(BaseModel):
 def startup():
     try:
         init_db()
+        # Warm up connection pool so first request isn't slow
+        get_pool().get_connection().close()
         print("Database tables ready")
     except Exception as e:
         print(f"DB init skipped (run schema.sql manually if needed): {e}")
