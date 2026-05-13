@@ -21552,6 +21552,13 @@ var __async = (__this, __arguments, generator) => {
     }
   }
 
+  /* Explicitly attach to window so onclick can find it */
+  window.saveQuote = saveQuote;
+  window.showSavedQuotes = showSavedQuotes;
+  window.closeSavedQuotes = closeSavedQuotes;
+  window.loadSavedQuote = loadSavedQuote;
+  window.deleteSavedQuote = deleteSavedQuote;
+
   function generateId() { return '_' + Math.random().toString(36).substr(2, 9); }
   function resetAllHard() {
     rooms = []; roomCounter = 0; bedroomCount = 0;
