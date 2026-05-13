@@ -20950,6 +20950,10 @@ var __async = (__this, __arguments, generator) => {
 ════════════════════════════════════════════════ -->
 <main class="main">
 
+  <div style="text-align:center;font-size:1.05rem;font-weight:600;color:#334155;margin-bottom:1rem;padding:.5rem 0;border-bottom:1.5px solid #E2A84B;">
+    This is an Estimate Quote for the Project
+  </div>
+
   <!-- Controls Bar -->
   <div class="controls-bar">
     <label for="room-select">Add Room:</label>
@@ -22851,7 +22855,7 @@ var __async = (__this, __arguments, generator) => {
   }
 
   /* ── Save / Load API ──────────────────────────── */
-  const API_BASE = 'http://localhost:8000';
+  const API_BASE = 'http://' + location.hostname + ':8000';
 
   function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
 
